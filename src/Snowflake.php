@@ -15,9 +15,9 @@ class Snowflake
 
     private $maxSequenceValue;
 
-    public function __construct(SequenceResolverInterface $resolver)
+    public function __construct(?SequenceResolverInterface $resolver = null)
     {
-        $this->resolver = $resolver;
+        $this->resolver = $resolver ?? new SequenceResolver();
         $this->startTime = strtotime('2017-01-01 00:00:00') * 1000;
 
         $this->maxSequenceValue = (1 << self::SEQUENCE_LENGTH) - 1;

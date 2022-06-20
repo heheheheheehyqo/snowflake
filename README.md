@@ -8,3 +8,9 @@
 ```sh
 composer require hyqo/snowflake
 ```
+
+## Usage
+```php
+$snowflake = new \Hyqo\Snowflake\Snowflake();
+$snowflake->generate('176648391717889')
+```

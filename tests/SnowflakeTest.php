@@ -8,29 +8,9 @@ use PHPUnit\Framework\TestCase;
 
 class SnowflakeTest extends TestCase
 {
-
-    private function createResolver(): SequenceResolverInterface
+    public function test_generate(): void
     {
-        return new class() implements SequenceResolverInterface {
-            private $lastTime;
-
-            private $index;
-
-            public function sequence(int $time): int
-            {
-                if ($this->lastTime === $time) {
-                    return ++$this->index;
-                }
-
-                $this->lastTime = $time;
-                return $this->index = 1;
-            }
-        };
-    }
-
-    public function test_generate()
-    {
-        $snowflake = new Snowflake($this->createResolver());
+        $snowflake = new Snowflake();
 
         $firstId = $snowflake->generate();
         $secondId = $snowflake->generate();
@@ -43,9 +23,9 @@ class SnowflakeTest extends TestCase
         $this->assertEquals(2, $secondData['sequence']);
     }
 
-    public function test_generate_for_date_time()
+    public function test_generate_for_date_time(): void
     {
-        $snowflake = new Snowflake($this->createResolver());
+        $snowflake = new Snowflake();
 
         $firstId = $snowflake->generateForDateTime(new \DateTimeImmutable('2022-01-01'));
         $secondId = $snowflake->generateForDateTime(new \DateTimeImmutable('2022-01-01'));
@@ -56,5 +36,27 @@ class SnowflakeTest extends TestCase
         $this->assertEquals($firstData['timestamp'], $secondData['timestamp']);
         $this->assertEquals(1, $firstData['sequence']);
         $this->assertEquals(2, $secondData['sequence']);
+    }
+
+    public function test_sequence_resolver(): void
+    {
+        $resolver = new class() implements SequenceResolverInterface {
+            public function sequence(int $time): int
+            {
+                return 1;
+            }
+        };
+
+        $snowflake = new Snowflake($resolver);
+
+        $firstId = $snowflake->generate();
+        $secondId = $snowflake->generate();
+
+        $firstData = $snowflake->parse($firstId);
+        $secondData = $snowflake->parse($secondId);
+
+        $this->assertEquals($firstData['timestamp'], $secondData['timestamp']);
+        $this->assertEquals(1, $firstData['sequence']);
+        $this->assertEquals(1, $secondData['sequence']);
     }
 }
