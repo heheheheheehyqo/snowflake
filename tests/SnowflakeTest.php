@@ -18,8 +18,6 @@ class SnowflakeTest extends TestCase
         $firstData = $snowflake->parse($firstId);
         $secondData = $snowflake->parse($secondId);
 
-        var_dump($firstId, $firstData);
-
         $this->assertEquals($firstData['timestamp'], $secondData['timestamp']);
         $this->assertEquals(1, $firstData['sequence']);
         $this->assertEquals(2, $secondData['sequence']);
