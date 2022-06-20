@@ -1,5 +1,5 @@
 {
-    "name": "hyqo/",
+    "name": "hyqo/snowflake",
     "description": "",
     "keywords": [
     ],
@@ -11,19 +11,19 @@
         }
     ],
     "require": {
-        "php": ">=8.0"
+        "php": ">=7.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^8.5"
     },
     "autoload": {
         "psr-4": {
-            "Hyqo\\": "src"
+            "Hyqo\\Snowflake\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Hyqo\\\\Test\\": "tests"
+            "Hyqo\\Snowflake\\Test\\": "tests"
         }
     }
 }
