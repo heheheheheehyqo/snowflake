@@ -12,5 +12,12 @@ composer require hyqo/snowflake
 ## Usage
 ```php
 $snowflake = new \Hyqo\Snowflake\Snowflake();
-$snowflake->generate('176648391717889')
+$snowflake->generate(); 
+// 176648695220225
+
+$snowflake->parse('176648695220225'); 
+// ["timestamp"]=> 
+// int(172508491426)
+// ["sequence"]=>
+// int(1)
 ```
