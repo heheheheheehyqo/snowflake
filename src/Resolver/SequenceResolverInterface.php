@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyqo\Snowflake;
+namespace Hyqo\Snowflake\Resolver;
 
 interface SequenceResolverInterface
 {

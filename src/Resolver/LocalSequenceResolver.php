@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyqo\Snowflake;
+namespace Hyqo\Snowflake\Resolver;
 
 class LocalSequenceResolver implements SequenceResolverInterface
 {
@@ -15,6 +15,6 @@ class LocalSequenceResolver implements SequenceResolverInterface
         }
 
         $this->lastTime = $time;
-        return $this->index = 1;
+        return $this->index = 0;
     }
 }

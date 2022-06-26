@@ -2,8 +2,9 @@
 
 namespace Hyqo\Snowflake\Test;
 
-use Hyqo\Snowflake\SequenceResolverInterface;
-use Hyqo\Snowflake\SharedSequenceResolver;
+use Hyqo\Snowflake\Resolver\MemcachedSequenceResolver;
+use Hyqo\Snowflake\Resolver\SequenceResolverInterface;
+use Hyqo\Snowflake\Resolver\SharedSequenceResolver;
 use Hyqo\Snowflake\Snowflake;
 use PHPUnit\Framework\TestCase;
 
@@ -20,12 +21,12 @@ class SnowflakeTest extends TestCase
         $secondData = $snowflake->parse($secondId);
 
         $this->assertTrue($secondData['timestamp'] - $firstData['timestamp'] <= 1);
-        $this->assertEquals(1, $firstData['sequence']);
+        $this->assertEquals(0, $firstData['sequence']);
 
         if ($secondData['timestamp'] === $firstData['timestamp']) {
-            $this->assertEquals(2, $secondData['sequence']);
-        } else {
             $this->assertEquals(1, $secondData['sequence']);
+        } else {
+            $this->assertEquals(0, $secondData['sequence']);
         }
     }
 
@@ -42,12 +43,34 @@ class SnowflakeTest extends TestCase
         $secondData = $snowflake->parse($secondId);
 
         $this->assertTrue($secondData['timestamp'] - $firstData['timestamp'] <= 1);
-        $this->assertEquals(1, $firstData['sequence']);
+        $this->assertEquals(0, $firstData['sequence']);
 
         if ($secondData['timestamp'] === $firstData['timestamp']) {
-            $this->assertEquals(2, $secondData['sequence']);
-        } else {
             $this->assertEquals(1, $secondData['sequence']);
+        } else {
+            $this->assertEquals(0, $secondData['sequence']);
+        }
+    }
+
+    public function test_memcached_sequence_resolver(): void
+    {
+        $address = sprintf('%s:11211', getenv('MEMCACHED_HOST') ?: 'memcached');
+        $resolver = new MemcachedSequenceResolver($address);
+
+        $snowflake = new Snowflake($resolver);
+
+        $firstId = $snowflake->generate();
+        $secondId = $snowflake->generate();
+
+        $firstData = $snowflake->parse($firstId);
+        $secondData = $snowflake->parse($secondId);
+
+        $this->assertEquals(0, $firstData['sequence']);
+
+        if ($secondData['timestamp'] === $firstData['timestamp']) {
+            $this->assertEquals(1, $secondData['sequence']);
+        } else {
+            $this->assertEquals(0, $secondData['sequence']);
         }
     }
 
@@ -62,8 +85,8 @@ class SnowflakeTest extends TestCase
         $secondData = $snowflake->parse($secondId);
 
         $this->assertEquals($firstData['timestamp'], $secondData['timestamp']);
-        $this->assertEquals(1, $firstData['sequence']);
-        $this->assertEquals(2, $secondData['sequence']);
+        $this->assertEquals(0, $firstData['sequence']);
+        $this->assertEquals(1, $secondData['sequence']);
     }
 
     public function test_sequence_resolver(): void

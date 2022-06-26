@@ -5,6 +5,12 @@ on: [ push, pull_request ]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      memcached:
+        image: memcached:alpine
+        ports:
+          - 11211:11211
+
     strategy:
       matrix:
         php: [ '7.2', '7.3', '7.4', '8.0', '8.1' ]
@@ -35,3 +41,5 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit
+        env:
+          MEMCACHED_HOST: localhost

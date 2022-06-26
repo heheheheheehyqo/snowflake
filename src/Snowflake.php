@@ -2,6 +2,9 @@
 
 namespace Hyqo\Snowflake;
 
+use Hyqo\Snowflake\Resolver\LocalSequenceResolver;
+use Hyqo\Snowflake\Resolver\SequenceResolverInterface;
+
 class Snowflake
 {
     public const SEQUENCE_LENGTH = 10;

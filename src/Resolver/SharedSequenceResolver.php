@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyqo\Snowflake;
+namespace Hyqo\Snowflake\Resolver;
 
 class SharedSequenceResolver implements SequenceResolverInterface
 {
@@ -14,25 +14,23 @@ class SharedSequenceResolver implements SequenceResolverInterface
     public function sequence(int $time): int
     {
         $stream = fopen($this->filename, 'cb+');
-
         flock($stream, LOCK_EX);
 
         $lastTime = (int)fgets($stream);
-        $index = (int)fgets($stream);
+        $sequence = (int)fgets($stream);
 
         if ($lastTime === $time) {
-            $index++;
+            $sequence++;
         } else {
-            $index = 1;
+            $sequence = 0;
         }
 
         ftruncate($stream, 0);
         rewind($stream);
-        fwrite($stream, $time . PHP_EOL . $index);
+        fwrite($stream, $time . PHP_EOL . $sequence);
 
-        flock($stream, LOCK_UN);
         fclose($stream);
 
-        return $index;
+        return $sequence;
     }
 }
