@@ -28,6 +28,7 @@ class SharedSequenceResolver implements SequenceResolverInterface
         ftruncate($stream, 0);
         rewind($stream);
         fwrite($stream, $time . PHP_EOL . $sequence);
+        fflush($stream);
 
         fclose($stream);
 
