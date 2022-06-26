@@ -3,12 +3,13 @@
 namespace Hyqo\Snowflake\Test;
 
 use Hyqo\Snowflake\SequenceResolverInterface;
+use Hyqo\Snowflake\SharedSequenceResolver;
 use Hyqo\Snowflake\Snowflake;
 use PHPUnit\Framework\TestCase;
 
 class SnowflakeTest extends TestCase
 {
-    public function test_generate(): void
+    public function test_local_sequence_resolver(): void
     {
         $snowflake = new Snowflake();
 
@@ -18,9 +19,36 @@ class SnowflakeTest extends TestCase
         $firstData = $snowflake->parse($firstId);
         $secondData = $snowflake->parse($secondId);
 
-        $this->assertEquals($firstData['timestamp'], $secondData['timestamp']);
+        $this->assertTrue($secondData['timestamp'] - $firstData['timestamp'] <= 1);
         $this->assertEquals(1, $firstData['sequence']);
-        $this->assertEquals(2, $secondData['sequence']);
+
+        if ($secondData['timestamp'] === $firstData['timestamp']) {
+            $this->assertEquals(2, $secondData['sequence']);
+        } else {
+            $this->assertEquals(1, $secondData['sequence']);
+        }
+    }
+
+    public function test_shared_sequence_resolver(): void
+    {
+        $resolver = new SharedSequenceResolver();
+
+        $snowflake = new Snowflake($resolver);
+
+        $firstId = $snowflake->generate();
+        $secondId = $snowflake->generate();
+
+        $firstData = $snowflake->parse($firstId);
+        $secondData = $snowflake->parse($secondId);
+
+        $this->assertTrue($secondData['timestamp'] - $firstData['timestamp'] <= 1);
+        $this->assertEquals(1, $firstData['sequence']);
+
+        if ($secondData['timestamp'] === $firstData['timestamp']) {
+            $this->assertEquals(2, $secondData['sequence']);
+        } else {
+            $this->assertEquals(1, $secondData['sequence']);
+        }
     }
 
     public function test_generate_for_date_time(): void
@@ -55,7 +83,7 @@ class SnowflakeTest extends TestCase
         $firstData = $snowflake->parse($firstId);
         $secondData = $snowflake->parse($secondId);
 
-        $this->assertEquals($firstData['timestamp'], $secondData['timestamp']);
+        $this->assertTrue($secondData['timestamp'] - $firstData['timestamp'] <= 1);
         $this->assertEquals(1, $firstData['sequence']);
         $this->assertEquals(1, $secondData['sequence']);
     }

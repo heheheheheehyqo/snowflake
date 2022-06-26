@@ -2,7 +2,7 @@
 
 namespace Hyqo\Snowflake;
 
-class SequenceResolver implements SequenceResolverInterface
+class LocalSequenceResolver implements SequenceResolverInterface
 {
     private $lastTime;
 

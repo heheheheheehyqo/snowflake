@@ -9,15 +9,15 @@ class Snowflake
     /**
      * @var SequenceResolverInterface
      */
-    private $resolver;
+    protected $resolver;
 
-    private $startTime;
+    protected $startTime;
 
-    private $maxSequenceValue;
+    protected $maxSequenceValue;
 
     public function __construct(?SequenceResolverInterface $resolver = null)
     {
-        $this->resolver = $resolver ?? new SequenceResolver();
+        $this->resolver = $resolver ?? new LocalSequenceResolver();
         $this->startTime = strtotime('2017-01-01 00:00:00') * 1000;
 
         $this->maxSequenceValue = (1 << self::SEQUENCE_LENGTH) - 1;
@@ -39,7 +39,6 @@ class Snowflake
 
         while (($sequence = $this->resolver->sequence($timestamp)) > $this->maxSequenceValue) {
             $timestamp++;
-            echo sprintf("next ms: %d, %d\n", $timestamp, $sequence);
         }
 
         return ($timestamp << self::SEQUENCE_LENGTH) | $sequence;
